@@ -42,9 +42,9 @@ terraform {
 }
 ```
 
-## Notes
-
 You will need to replace the `${variable}` variables in `backend.tf` manually since terraform backend configurations do not support variables.
+
+## Notes
 
 The resulting `tfstate` for this `terraform apply` is stored locally, which isn't usually what we want; in fact, this whole repo is to avoid doing so in other infra definitions.
 
