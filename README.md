@@ -42,7 +42,7 @@ terraform {
 }
 ```
 
-You will need to replace the `${variable}` variables in `backend.tf` manually since terraform backend configurations do not support variables.
+You will need to replace the `${variables}` in `backend.tf` manually since terraform backend configurations do not support variables.
 
 ## Notes
 
