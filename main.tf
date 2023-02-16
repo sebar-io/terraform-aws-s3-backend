@@ -2,39 +2,16 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_s3_bucket" "terraform_state" {
-  bucket = "${var.organization}-tfstate-bucket"
-
-  lifecycle {
-    prevent_destroy = true
-  }
+# stage backend
+module "backend-stage" {
+  source = "./modules/backend"
+  env = "stage"
+  organization = var.organization
 }
 
-resource "aws_s3_bucket_public_access_block" "this" {
-  bucket = aws_s3_bucket.terraform_state.id
-
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
-
-resource "aws_s3_bucket_versioning" "terraform_state" {
-    bucket = aws_s3_bucket.terraform_state.id
-
-    versioning_configuration {
-      status = "Enabled"
-    }
-}
-
-resource "aws_dynamodb_table" "terraform_state_lock" {
-  name           = "${var.organization}-tfstate-table"
-  read_capacity  = 1
-  write_capacity = 1
-  hash_key       = "LockID"
-
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
+# prod backend
+module "backend-prod" {
+  source = "./modules/backend"
+  env = "prod"
+  organization = var.organization
 }

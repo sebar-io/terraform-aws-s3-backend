@@ -22,27 +22,51 @@ Make note of the outputs that should look something like this:
 ```
 Outputs:
 
-terraform_backend_dynamodb_table = "tfstate"
-terraform_backend_s3_bucket = "org-tfstate"
+prod_terraform_backend_dynamodb_table = "prod-${organization}-tfstate-table"
+prod_terraform_backend_s3_bucket = "prod-${organization}-terraform-bucket"
+stage_terraform_backend_dynamodb_table = "stage-${organization}-tfstate-table"
+stage_terraform_backend_s3_bucket = "stage-${organization}-terraform-bucket"
 ```
 
 ## Usage
 
-Use the `terraform_backend_dynamodb_table` and `terraform_backend_s3_bucket` outputs in your organizational app infra backends with a corresponding S3 key
+Use the `terraform_backend_s3_bucket` and `terraform_backend_dynamodb_table` outputs for the appropriate environment in your organizational app infra backends with a corresponding S3 key
+
+### Stage Backend Example:
 
 ```
-# backend.tf
+# ${project}/infra/stage/backend.tf
 terraform {
     backend "s3" {
-        bucket = "${terraform_backend_s3_bucket}"
-        key    = "${app_name}/${env}.tfstate"
+        # REPLACE manually with stage_terraform_backend_s3_bucket output
+        bucket = "stage-${organization}-terraform-bucket"
+        # REPLACE manually with app_name
+        key    = "${app_name}/terraform.tfstate"
         region = "us-east-1"
-        dynamodb_table = "${terraform_backend_s3_bucket}"
+        # REPLACE with stage_terraform_backend_dynamodb_table output
+        dynamodb_table = "stage-${organization}-tfstate-table"
     }
 }
 ```
 
-You will need to replace the `${variables}` in `backend.tf` manually since terraform backend configurations do not support variables.
+### Prod Backend Example:
+
+```
+# ${project}/infra/prod/backend.tf
+terraform {
+    backend "s3" {
+        # REPLACE manually with prod_terraform_backend_s3_bucket output
+        bucket = "prod-${organization}-terraform-bucket"
+        # REPLACE manually with app_name
+        key    = "${app_name}/terraform.tfstate"
+        region = "us-east-1"
+        # REPLACE with prod_terraform_backend_dynamodb_table output
+        dynamodb_table = "prod-${organization}-tfstate-table"
+    }
+}
+```
+
+You will need to replace the `${variables}` in `backend.tf` manually since terraform backend configurations do not allow for variables.
 
 ## Notes
 
