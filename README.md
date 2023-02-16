@@ -22,15 +22,15 @@ Make note of the outputs that should look something like this:
 ```
 Outputs:
 
-prod_terraform_backend_dynamodb_table = "prod-${organization}-tfstate-table"
-prod_terraform_backend_s3_bucket = "prod-${organization}-terraform-bucket"
-stage_terraform_backend_dynamodb_table = "stage-${organization}-tfstate-table"
-stage_terraform_backend_s3_bucket = "stage-${organization}-terraform-bucket"
+prod_backend_dynamodb_table = "prod-${organization}-tfstate-table"
+prod_backend_s3_bucket = "prod-${organization}-terraform-bucket"
+stage_backend_dynamodb_table = "stage-${organization}-tfstate-table"
+stage_backend_s3_bucket = "stage-${organization}-terraform-bucket"
 ```
 
 ## Usage
 
-Use the `terraform_backend_s3_bucket` and `terraform_backend_dynamodb_table` outputs for the appropriate environment in your organizational app infra backends with a corresponding S3 key
+Use the `${env}_backend_s3_bucket` and `${env}_backend_dynamodb_table` outputs for the appropriate environment in your organizational app infra backends with a corresponding S3 key
 
 ### Stage Backend Example:
 
@@ -38,12 +38,12 @@ Use the `terraform_backend_s3_bucket` and `terraform_backend_dynamodb_table` out
 # ${project}/infra/stage/backend.tf
 terraform {
     backend "s3" {
-        # REPLACE manually with stage_terraform_backend_s3_bucket output
+        # ${env}-${organization}-terraform-bucket
         bucket = "stage-${organization}-terraform-bucket"
-        # REPLACE manually with app_name
-        key    = "${app_name}/terraform.tfstate"
+        # ${repo}/terraform.tfstate
+        key    = "${repo}/terraform.tfstate"
         region = "us-east-1"
-        # REPLACE with stage_terraform_backend_dynamodb_table output
+        # ${env}-${organizational}-tfstate-table
         dynamodb_table = "stage-${organization}-tfstate-table"
     }
 }
@@ -55,12 +55,12 @@ terraform {
 # ${project}/infra/prod/backend.tf
 terraform {
     backend "s3" {
-        # REPLACE manually with prod_terraform_backend_s3_bucket output
+        # ${env}-${organization}-terraform-bucket
         bucket = "prod-${organization}-terraform-bucket"
-        # REPLACE manually with app_name
-        key    = "${app_name}/terraform.tfstate"
+        # ${repo}/terraform.tfstate
+        key    = "${repo}/terraform.tfstate"
         region = "us-east-1"
-        # REPLACE with prod_terraform_backend_dynamodb_table output
+        # ${env}-${organizational}-tfstate-table
         dynamodb_table = "prod-${organization}-tfstate-table"
     }
 }
